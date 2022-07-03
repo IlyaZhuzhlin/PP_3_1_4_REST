@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -23,50 +22,43 @@ public class UserServiceImpl implements UserService {
         this.userDAO = userDAO;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
-
     @Override
     @Transactional
     public List<User> getAllUsers() {
         return userDAO.getAllUsers();
     }
-
     @Override
     @Transactional
     public void saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userDAO.saveUser(user);
     }
-
     @Override
     @Transactional
-    public User getUser(int id) {
-        return userDAO.getUser(id);
+    public User getUserById(int id) {
+        return userDAO.getUserById(id);
     }
-
     @Override
     @Transactional
     public void deleteUser(int id) {
         userDAO.deleteUser(id);
     }
-
     @Override
     @Transactional
     public void updateUser(User user, int id) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userDAO.updateUser(user, id);
     }
-
     @Override
     @Transactional
-    public User findByUsername(String username) {
-        return userDAO.findByUsername(username);
+    public User getUserByEmail(String email) {
+        return userDAO.getUserByEmail(email);
     }
-
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userDAO.findByUsername(username);
-        if(user == null) {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userDAO.getUserByEmail(email);
+        if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
         user.getAuthorities().size();

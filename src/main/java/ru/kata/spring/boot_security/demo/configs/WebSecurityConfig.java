@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -24,24 +25,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
+        http.formLogin()
+                .loginPage("/login")
+                .successHandler(successUserHandler)
+                .loginProcessingUrl("/login")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .permitAll();
         http
                 .authorizeRequests()
-                .antMatchers( "/admin/**").hasRole("ADMIN")
-                .antMatchers("/user").hasAnyRole("USER","ADMIN")
-                .antMatchers("/login").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().successHandler(successUserHandler)
+                .antMatchers("/login").anonymous()
+                .antMatchers("/user/**").access("hasAnyRole('USER', 'ADMIN')")
+                .antMatchers("/admin/**").access("hasRole('ADMIN')").anyRequest().authenticated();
+        http.logout()
                 .permitAll()
-                .and()
-                .logout()
-                .permitAll();
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login?logout")
+                .and().csrf().disable();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-       authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
+
     @Bean
     public static BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();

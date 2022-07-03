@@ -18,31 +18,35 @@ public class User implements UserDetails {
     private String name;
     @Column(name = "surname")
     private String surname;
-    @Column(name = "department")
-    private String department;
     @Column(name = "age")
     private int age;
-    @Column(name = "username")
-    private String username;
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "password")
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @Column(name = "roles")
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "users_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+
     private Set<Role> roles;
 
     public User() {
 
     }
 
-    public User(String name, String surname, String department, int age, String username, String password) {
+    public User(int id, String name, String surname, int age, String email, Set<Role> roles) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
-        this.department = department;
         this.age = age;
-        this.username = username;
-        this.password = password;
+        this.email = email;
+        this.roles = roles;
     }
+
 
     public int getId() {
         return id;
@@ -68,13 +72,7 @@ public class User implements UserDetails {
         this.surname = surname;
     }
 
-    public String getDepartment() {
-        return department;
-    }
 
-    public void setDepartment(String department) {
-        this.department = department;
-    }
 
     public int getAge() {
         return age;
@@ -84,9 +82,12 @@ public class User implements UserDetails {
         this.age = age;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
 
@@ -115,8 +116,9 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
+
 
     @Override
     public boolean isAccountNonExpired() {
@@ -144,10 +146,8 @@ public class User implements UserDetails {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", department='" + department + '\'' +
                 ", age=" + age +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
                 ", roles=" + roles +
                 '}';
     }
