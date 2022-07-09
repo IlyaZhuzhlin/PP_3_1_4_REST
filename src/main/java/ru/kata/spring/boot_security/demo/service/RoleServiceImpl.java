@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.dao.RoleDao;
 import ru.kata.spring.boot_security.demo.model.Role;
 
-import java.util.Set;
+import java.util.List;
+
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -18,12 +19,17 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Set<Role> getAllRoles() {
+    public List<Role> getAllRoles() {
        return roleDao.getAllRoles();
     }
 
     @Override
-    public Set<Role> getByName(String name) {
-        return roleDao.getByName(name);
+    public Role getRole(String userRole) {
+        return roleDao.getRole(userRole);
+    }
+
+    @Override
+    public Role getRoleById(int id) {
+        return roleDao.getRoleById(id);
     }
 }

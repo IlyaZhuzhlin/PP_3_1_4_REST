@@ -2,10 +2,12 @@ package ru.kata.spring.boot_security.demo.dao;
 
 import ru.kata.spring.boot_security.demo.model.Role;
 
-import java.util.Set;
+import java.util.List;
 
 public interface RoleDao {
-    Set<Role> getAllRoles();
+    List<Role> getAllRoles();
 
-    Set<Role> getByName(String name);
+    Role getRole(String userRole);
+
+    Role getRoleById(int id);
 }

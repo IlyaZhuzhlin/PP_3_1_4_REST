@@ -1,10 +1,13 @@
 package ru.kata.spring.boot_security.demo.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -13,7 +16,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Long id;
     @Column(name = "name")
     private String name;
     @Column(name = "surname")
@@ -23,23 +26,22 @@ public class User implements UserDetails {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
     @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "users_id"),
+            joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     public User() {
 
     }
 
-    public User(int id, String name, String surname, int age, String email, Set<Role> roles) {
-        this.id = id;
+    public User( String name, String surname, int age, String email, Set<Role> roles) {
         this.name = name;
         this.surname = surname;
         this.age = age;
@@ -48,11 +50,11 @@ public class User implements UserDetails {
     }
 
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -106,7 +108,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        return roles;
     }
 
     @Override
@@ -148,7 +150,6 @@ public class User implements UserDetails {
                 ", surname='" + surname + '\'' +
                 ", age=" + age +
                 ", email='" + email + '\'' +
-                ", roles=" + roles +
                 '}';
     }
 }

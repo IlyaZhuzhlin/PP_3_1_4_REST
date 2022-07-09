@@ -3,63 +3,62 @@ package ru.kata.spring.boot_security.demo.model;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "role")
+@Table(name = "roles")
 public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
-    @Column(name = "name")
-    private String name;
+    private Long id;
+    @Column(name = "role",unique = true)
+    private String userRole;
 
-   @Transient
+    @Transient
     @ManyToMany(mappedBy = "roles")
-    @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "users_id")
-    )
-    private List<User> users;
 
-    private final static String PREFIX = "ROLE_";
+    private Set<User> users;
+
 
     public Role() {
     }
 
-    public Role(int id, String name) {
-        this.id = id;
-        this.name = name;
+    public Role( String userRole) {
+        this.userRole = userRole;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUserRole() {
+        return userRole;
     }
 
-    public void setName(String role) {
-        this.name = name;
+    public void setUserRole(String role) {
+        this.userRole = role;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     @Override
     public String getAuthority() {
-        return PREFIX + getName();
+        return userRole;
     }
 
     @Override
     public String toString() {
-        return "Role{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", users=" + users +
-                '}';
+        return userRole;
     }
 }
