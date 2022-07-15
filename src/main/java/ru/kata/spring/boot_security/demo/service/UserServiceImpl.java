@@ -36,12 +36,6 @@ public class UserServiceImpl implements UserService {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userDAO.saveUser(user);
     }
-
-    @Override
-    public User getUserById(Long id) {
-        return userDAO.getUserById(id);
-    }
-
     @Override
     @Transactional
     public void deleteUser(Long id) {
